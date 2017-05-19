@@ -78,21 +78,9 @@ for(var i = 0; i < n; i++){
     shuiji += str.charAt(rand);
 }
 </script>
-<script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>   
 <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 <script type="text/javascript">
- //weui["alert"]('分享成功，剩下最后一步啦！<br>请分享到<span style="font-size: 30px;color: #f5294c">朋友圈</span>即可领取');
 
-/*
-wx.config({
-    debug:false,
-    appId: 'wx11c9c5e0caa39291',
-    timestamp: 1492757846,
-    nonceStr: 'S2lWO5DjGvxwlS2B',
-    signature: '5abdc2ff02c316b7c14565f9b3551028386c9156',
-    jsApiList: ['onMenuShareTimeline','onMenuShareAppMessage','onMenuShareQQ','onMenuShareWeibo','hideMenuItems']
-	});
-*/
 var qurl="";
 var zhurl="";
 var cgurl="";
@@ -154,6 +142,22 @@ function wxconfig(appId,timestamp,nonceStr,signature){
         jsApiList: ['onMenuShareTimeline','onMenuShareAppMessage','onMenuShareQQ','onMenuShareWeibo','hideMenuItems'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
       });
 }
+ 
+
+//统计
+function sharetj(type,msg){
+    var domain = document.domain;
+	var url ="http://hd.antelun.com/index.php/shareinfo/push/"+type+"/"+domain+"/"+msg;
+	$.ajax({ type: "get", async: false, url: url,
+		dataType: "jsonp",
+		//data:"",
+		jsonp: "callback",
+		jsonpCallback:"checkHandler",
+		success: function(data){ 
+		}
+		});
+}
+
 function wxshareconfig(domain){
 	wx.ready(function() {
 	    wx.hideMenuItems({
@@ -165,8 +169,9 @@ function wxshareconfig(domain){
 	            desc: ms,
 	            link:  qurl+'?'+shuiji,
 	            imgUrl: imurl+'?'+shuiji,
-	    		type: 'music',
+	    		type: 'link',
 	         success: function() {
+	        	 	sharetj(1,"");
 	                share_time++;
 	                if (share_time < 3) {
 	                   weui["alert"]('分享成功！再分享<span style="font-size: 30px;color: #f5294c">' + (3 - share_time) + '个</span>不同的群即可！(群人数不少于50人)');
@@ -179,6 +184,7 @@ function wxshareconfig(domain){
 	            	}
 				},
 				cancel : function() {
+					sharetj(2,"");
 				}
 			};
 	    wx.onMenuShareAppMessage(shareData);
@@ -186,9 +192,10 @@ function wxshareconfig(domain){
 	    wx.onMenuShareQQ(shareData)
 	});
 	wx.error(function(res) {
-	    alert(res.errMsg)
+		sharetj(3,res.errMsg);
 	});
 }
+
 
 function getdata(){
 	
@@ -201,6 +208,7 @@ function getdata(){
 	'page_surveyed':page_surveyed}
 	return JSON.stringify(srcdata);
 }
+
 </script>
 
 

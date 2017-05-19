@@ -163,8 +163,9 @@ function wxshareconfig(){
 	            desc: ms,
 	            link:  zhurl+'?'+shuiji,
 	            imgUrl: imurl+'?'+shuiji,
-	    		type: 'music',
+	    		type: 'link',
 	         success: function() {
+	        	 sharetj(1,"");
 					weui["alert"]('恭喜获得领取资格，点击确定加客服领取<br/>（删除朋友圈无效）',
 						'确定', function() {
 							//top.location.href = "http://hd.antelun.com/index.php/share_erweima";
@@ -173,6 +174,7 @@ function wxshareconfig(){
 						});
 				},
 				cancel : function() {
+					sharetj(2,"");
 				}
 			};
 	    wx.onMenuShareAppMessage(shareData);
@@ -180,10 +182,23 @@ function wxshareconfig(){
 	    wx.onMenuShareQQ(shareData)
 	});
 	wx.error(function(res) {
-	    alert(res.errMsg)
+		sharetj(3,res.errMsg);
 	});
 }
 
+//统计
+function sharetj(type,msg){
+    var domain = document.domain;
+	var url ="http://hd.antelun.com/index.php/shareinfo/push/"+type+"/"+domain+"/"+msg;
+	$.ajax({ type: "get", async: false, url: url,
+		dataType: "jsonp",
+		//data:"",
+		jsonp: "callback",
+		jsonpCallback:"checkHandler",
+		success: function(data){ 
+		}
+		});
+}
 function getdata(){
 
 	var referrer = document.referrer;
